@@ -1,1 +1,3 @@
-# TENZI_dice_game
+# TENZI DICE GAME
+## Description
+
