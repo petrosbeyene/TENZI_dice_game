@@ -1,8 +1,9 @@
 import React from "react"
 import Die from "./components/Die"
 import {nanoid} from "nanoid"
-import Confetti from "react-confetti"
+// import Confetti from "react-confetti"
 import Counter from "./components/Counter"
+import Congrats from "./components/Congrats"
 
 export default function App() {
 
@@ -67,10 +68,10 @@ export default function App() {
         />
     ))
     
-    return (
+    return ( tenzies ? <Congrats newGame={rollDice}/> :
         <div className="main-window">
             <main>
-            {tenzies && <Confetti />}
+            {/* {tenzies && <Confetti />} */}
             <h1 className="title">Tenzies</h1>
             <p className="instructions">Roll until all dice are the same. 
             Click each die to freeze it at its current value between rolls.</p>
@@ -81,7 +82,7 @@ export default function App() {
                 className="roll-dice" 
                 onClick={rollDice}
             >
-                {tenzies ? "New Game" : "Roll"}
+                Roll
             </button>
             </main>
             <Counter title={"Number of rolls"} rollCount= {rollCount}/>

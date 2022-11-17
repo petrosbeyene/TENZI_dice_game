@@ -93,3 +93,14 @@ main {
     background-color: #FFFFFF;
 }
 
+.congra {
+    background-color: #F5F5F5;
+    height: 400px;
+    width: 500px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
