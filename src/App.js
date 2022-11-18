@@ -1,17 +1,19 @@
-import React from "react"
+import React, {useState, useRef, useEffect } from "react"
 import Die from "./components/Die"
 import {nanoid} from "nanoid"
-// import Confetti from "react-confetti"
 import Counter from "./components/Counter"
 import Congrats from "./components/Congrats"
+import TimerApp from "./components/Timer"
 
 export default function App() {
 
-    const [dice, setDice] = React.useState(allNewDice())
-    const [tenzies, setTenzies] = React.useState(false)
-    const [rollCount, setRollCount] = React.useState(0)
+    const [dice, setDice] = useState(allNewDice())
+    const [tenzies, setTenzies] = useState(false)
+    const [rollCount, setRollCount] = useState(0)
+    const [timer, setTimer] = useState('')
+    const [timeOut, setTimeOut] = useState(false)
     
-    React.useEffect(() => {
+    useEffect(() => {
         const allHeld = dice.every(die => die.isHeld)
         const firstValue = dice[0].value
         const allSameValue = dice.every(die => die.value === firstValue)
@@ -48,6 +50,8 @@ export default function App() {
             setTenzies(false)
             setDice(allNewDice())
             setRollCount(0)
+            setTimeOut(false)
+            clearTimer()
         }
     }
     
@@ -67,25 +71,89 @@ export default function App() {
             holdDice={() => holdDice(die.id)}
         />
     ))
+
+    // Creating Timer logics
+    const ref = useRef(null)
+    function getTimeRemaining(deadline){
+		const total = Date.parse(deadline) - Date.parse(new Date());
+		const seconds = Math.floor((total / 1000) % 60);
+		const minutes = Math.floor((total / 1000 / 60) % 60);
+		const hours = Math.floor((total / 1000 / 60 / 60) % 24);
+		return {
+			total, hours, minutes, seconds
+		};
+	}
+
+    function startTimer(deadline){
+		let { total, hours, minutes, seconds }
+					= getTimeRemaining(deadline);
+		if (total > 0) {
+			setTimer(
+				(hours > 9 ? hours : '0' + hours) + ':' +
+				(minutes > 9 ? minutes : '0' + minutes) + ':'
+				+ (seconds > 9 ? seconds : '0' + seconds)
+			)
+		}else if(total === 0){
+            setTimeOut(true)
+        }
+	}
+
+    function clearTimer(){
+		setTimer('00:00:60');
+
+        let deadline = new Date()
+        deadline.setSeconds(deadline.getSeconds() + 60)
+
+		if (ref.current) clearInterval(ref.current);
+		const id = setInterval(() => {
+			startTimer(deadline);
+		}, 1000)
+		ref.current = id;
+	}
+
+    useEffect(() => {
+		clearTimer();
+	}, []);
+
+	
+	function resetGame(){
+        setTenzies(false)
+        setDice(allNewDice())
+        setRollCount(0)
+        setTimeOut(false)
+		clearTimer();  
+	}
     
-    return ( tenzies ? <Congrats newGame={rollDice}/> :
+    return (
+        timeOut ? <Congrats newGame={resetGame} value={"You Lose!"} timeOut={timeOut}/> : 
+        tenzies ? <Congrats newGame={rollDice} value={"You win!"} timeOut={timeOut}/> :
         <div className="main-window">
             <main>
-            {/* {tenzies && <Confetti />} */}
             <h1 className="title">Tenzies</h1>
             <p className="instructions">Roll until all dice are the same. 
             Click each die to freeze it at its current value between rolls.</p>
             <div className="dice-container">
                 {diceElements}
             </div>
-            <button 
-                className="roll-dice" 
-                onClick={rollDice}
-            >
-                Roll
-            </button>
+            <div>
+                <button 
+                    className="roll-dice" 
+                    onClick={rollDice}
+                >
+                    Roll
+                </button>
+                <button 
+                    className="roll-dice" 
+                    onClick={resetGame}
+                >
+                    Start Again
+                </button>
+            </div>
             </main>
-            <Counter title={"Number of rolls"} rollCount= {rollCount}/>
+            <div>
+                <Counter title={"Number of rolls"} rollCount= {rollCount}/>
+                <TimerApp timerVal={timer}/>
+            </div>
         </div>
         
     )
