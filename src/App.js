@@ -111,6 +111,10 @@ export default function App() {
 		ref.current = id;
 	}
 
+    // useEffect(() => {
+    //     clearInterval(ref.current)
+    // }, [tenzies])
+
     useEffect(() => {
 		clearTimer();
 	}, []);
@@ -121,8 +125,15 @@ export default function App() {
         setDice(allNewDice())
         setRollCount(0)
         setTimeOut(false)
-		clearTimer();  
+		clearTimer();
 	}
+
+    // This if case was written for the sole purpose of preventing 
+    // the timer from counting towards zero after even tenzies has
+    // been reached.
+    if (tenzies){
+        clearInterval(ref.current)
+    }
     
     return (
         timeOut ? <Congrats newGame={resetGame} value={"You Lose!"} timeOut={timeOut}/> : 
