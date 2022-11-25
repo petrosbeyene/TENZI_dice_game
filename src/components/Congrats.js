@@ -6,7 +6,7 @@ export default function Congrats(props){
         <div className="congra">
             {!props.timeOut && <Confetti />}
             <h1>{props.value}</h1>
-            <h4>Score: </h4>
+            <h2>Score: {props.calcScore}</h2>
             <button className="roll-dice" onClick={props.newGame}>New Game</button>
         </div>
     )
