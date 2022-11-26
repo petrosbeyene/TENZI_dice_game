@@ -125,6 +125,7 @@ export default function PlayingPage() {
 		clearTimer();
 	}
 
+    // function to calcualte the score
     const calculateScore = () => {
        const timeTaken = 40 - parseInt(timer.slice(6))
        const rollTaken = rollCount
